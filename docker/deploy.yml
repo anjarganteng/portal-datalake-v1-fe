@@ -1,0 +1,102 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: "telkomsigma-web-frontend"
+objects:
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: "telkomsigma-web-frontend"
+    labels:
+      app: "telkomsigma-web-frontend"
+    annotations:
+      description: Telkomsigma service Angular Frontend server
+  spec:
+    strategy:
+      type: Rolling
+      rollingParams:
+        updatePeriodSeconds: 1
+        intervalSeconds: 1
+        timeoutSeconds: 600
+        maxUnavailable: 25%
+        maxSurge: 25%
+      resources: {}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - "telkomsigma-web-frontend"
+        from:
+          kind: ImageStreamTag
+          name: "telkomsigma-web-frontend:latest"
+    replicas: 1
+    revisionHistoryLimit: 5
+    minReadySeconds: 20
+    selector:
+      deploymentconfig: "telkomsigma-web-frontend"
+    template:
+      metadata:
+        creationTimestamp: 
+        labels:
+          deploymentconfig: "telkomsigma-web-frontend"
+      spec:
+        containers:
+        - name: "telkomsigma-web-frontend"
+          image: "telkomsigma-web-frontend"
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8082
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8082
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+        restartPolicy: Always
+        terminationGracePeriodSeconds: 30
+        dnsPolicy: ClusterFirst
+        securityContext: {}
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: "telkomsigma-web-frontend"
+    labels:
+      app: "telkomsigma-web-frontend"
+    annotations:
+      description: Telkomsigma Angular Frontend Service
+  spec:
+    ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    selector:
+      deploymentconfig: "telkomsigma-web-frontend"
+    type: ClusterIP
+    sessionAffinity: None
+- kind: Route
+  apiVersion: v1
+  metadata:
+    name: "telkomsigma-web-frontend"
+  spec:
+    host: frontend-bmri-jonfis.router.default.svc.cluster.local
+    to:
+      kind: Service
+      name: "telkomsigma-web-frontend"

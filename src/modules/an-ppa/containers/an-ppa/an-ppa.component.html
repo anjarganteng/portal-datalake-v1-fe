@@ -1,0 +1,285 @@
+<sb-layout-dashboard>
+  <sb-dashboard-head title="{{title}}" [hideBreadcrumbs]="false"></sb-dashboard-head>
+          <div class="alert alert-success alert-dismissible fade show" role="alert"  *ngIf="alertSuccess">
+              <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"  *ngIf="alertError">
+              <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+
+            <div class="alert alert-info alert-dismissible fade show" role="alert"  *ngIf="alertInfo">
+              <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+
+      <sb-card>
+          <div class="card-header">
+              <div class="row">
+                  <div class="col-md-8">
+                      <fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon>{{title}} List
+                  </div>
+                  <div class="col-md-4 float-right">
+                    <button class="btn btn-primary"
+                    (click)="showAdd()"><i class="fa fa-plus" aria-hidden="true"></i> Add Data</button>
+                    &nbsp;
+
+                    <button class="btn btn-primary"
+                    (click)="getExcelData()"><i class="fa fa-download" aria-hidden="true"></i> Download</button>
+                    &nbsp;
+
+                    <button class="btn btn-primary"
+                    (click)="regenerateData()"><i class="fa fa-refresh" aria-hidden="true"></i> Regenerate</button>
+                    </div>
+                </div>
+          </div>
+      <div class="card-body">
+          <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"  class="table table-observer table-striped thead-dark">
+              <thead>
+                  <tr>
+                      <th scope="col">Kode Coa</th>
+                      <th scope="col">Deskripsi Coa</th>
+                      <th scope="col">Jenis</th>
+                      <th scope="col">Sandi Jenis</th>
+                      <th scope="col">Cabang</th>
+                      <th scope="col">Wilayah</th>
+                      <th scope="col">Mata Uang</th>
+                      <th scope="col">Tanggal Mulai</th>
+                      <th scope="col">Tanggal Jth Tempo</th>
+                      <th scope="col">Metode Ukur</th>
+                      <th scope="col">Status Aset</th>
+                      <th scope="col">Kualitas Aset</th>
+                      <th scope="col">Nomor Aset</th>
+                      <th scope="col">Harga Perolehan</th>
+                      <th scope="col">Akumulasi Susut</th>
+                      <th scope="col">Nilai Buku</th>
+                      <th>Action</th>
+                  </tr>
+                  <tr  *ngFor="let data of dataTableTemp">
+                      <td>{{data.kodeCoa}}</td>
+                      <td>{{data.deskripsiCoa}}</td>
+                      <td>{{data.jenis}}</td>
+                      <td>{{data.sandiJenis}}</td>
+                      <td>{{data.cabang}}</td>
+                      <td>{{data.wilayah}}</td>
+                      <td>{{data.mataUang}}</td>
+                      <td>{{data.tglMulai}}</td>
+                      <td>{{data.tglJthTempo}}</td>
+                      <td>{{data.metodeUkur}}</td>
+                      <td>{{data.statusAset}}</td>
+                      <td>{{data.kualitasAset}}</td>
+                      <td>{{data.nomorAset}}</td>
+                      <td>{{data.hargaPerolehan}}</td>
+                      <td>{{data.akumulasiSusut}}</td>
+                      <td>{{data.nilaiBuku}}</td>
+                      <td>
+                          <div class='actions-buttons center' id=''>
+                              <i kind='edit' class='fa fa-edit pointer text-info' title='Edit' (click)="showEdit(data)"></i>&nbsp;&nbsp;
+                              <i kind='delete' class='fa fa-trash pointer text-danger' title='Delete' (click)="showDelete(data)" ></i>
+                          </div>
+                      </td>
+                  </tr>
+                  
+              </thead>
+              <tbody >
+                
+              </tbody>
+          </table>
+
+          <ng-template #mymodal let-modal>
+              <form  [formGroup]="form" (ngSubmit)="submit()">
+              <div class="modal-header" *ngIf="!loading">
+                <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <div class="text-center" *ngIf="loading">
+                      <img src="assets/img/745.gif"/>
+                  </div>
+                  <div  *ngIf="!loading">
+                      <div class="row">
+                        <div class="form-group col">
+                            <label for="exampleInputEmail1">Kode Coa</label>
+                            <input type="text" class="form-control" id="kodeCoa" formControlName="kodeCoa" aria-describedby="emailHelp" placeholder="Kode Coa">
+                            <div *ngIf="form.controls.kodeCoa.errors?.required && form.controls.kodeCoa.touched" class="error">
+                              *Required
+                            </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Deskripsi Coa</label>
+                          <input type="text" class="form-control" id="deskripsiCoa" formControlName="deskripsiCoa" aria-describedby="emailHelp" placeholder="Deskripsi Coa">
+                          <div *ngIf="form.controls.deskripsiCoa.errors?.required && form.controls.deskripsiCoa.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+                        
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Jenis</label>
+                          <input type="text" class="form-control" id="jenis" formControlName="jenis" aria-describedby="emailHelp" placeholder="Jenis">
+                          <div *ngIf="form.controls.jenis.errors?.required && form.controls.jenis.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Sandi Jenis</label>
+                          <input type="text" class="form-control" id="sandiJenis" formControlName="sandiJenis" aria-describedby="emailHelp" placeholder="Sandi Jenis">
+                          <div *ngIf="form.controls.sandiJenis.errors?.required && form.controls.sandiJenis.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Cabang</label>
+                            <input type="text" class="form-control" id="cabang" formControlName="cabang" aria-describedby="emailHelp" placeholder="Cabang">
+                            <div *ngIf="form.controls.cabang.errors?.required && form.controls.cabang.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Wilayah</label>
+                            <input type="text" class="form-control" id="wilayah" formControlName="wilayah" aria-describedby="emailHelp" placeholder="Wilayah">
+                            <div *ngIf="form.controls.wilayah.errors?.required && form.controls.wilayah.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Mata Uang</label>
+                            <input type="text" class="form-control" id="mataUang" formControlName="mataUang" aria-describedby="emailHelp" placeholder="Mata Uang">
+                            <div *ngIf="form.controls.mataUang.errors?.required && form.controls.mataUang.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Tanggal Mulai</label>
+                            <input type="date" class="form-control" id="tglMulai" formControlName="tglMulai" aria-describedby="emailHelp" placeholder="Tanggal Mulai">
+                            <div *ngIf="form.controls.tglMulai.errors?.required && form.controls.tglMulai.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="form-group col">
+                              <label for="exampleInputEmail1">Tanggal Jth Tempo</label>
+                              <input type="date" class="form-control" id="tglJthTempo" formControlName="tglJthTempo" aria-describedby="emailHelp" placeholder="Tanggal Jth Tempo">
+                              <div *ngIf="form.controls.tglJthTempo.errors?.required && form.controls.tglJthTempo.touched" class="error">
+                                *Required
+                              </div>
+                            </div>
+
+                            <div class="form-group col">
+                              <label for="exampleInputEmail1">Metode Ukur</label>
+                              <input type="text" class="form-control" id="metodeUkur" formControlName="metodeUkur" aria-describedby="emailHelp" placeholder="Metode Ukur">
+                              <div *ngIf="form.controls.metodeUkur.errors?.required && form.controls.metodeUkur.touched" class="error">
+                                *Required
+                              </div>
+                            </div>
+
+                            <div class="form-group col">
+                              <label for="exampleInputEmail1">Status Aset</label>
+                              <input type="text" class="form-control" id="statusAset" formControlName="statusAset" aria-describedby="emailHelp" placeholder="Status Aset">
+                              <div *ngIf="form.controls.statusAset.errors?.required && form.controls.statusAset.touched" class="error">
+                                *Required
+                              </div>
+                            </div>
+
+                            <div class="form-group col">
+                              <label for="exampleInputEmail1">Kualitas Aset</label>
+                              <input type="text" class="form-control" id="kualitasAset" formControlName="kualitasAset" aria-describedby="emailHelp" placeholder="Kualitas Aset">
+                              <div *ngIf="form.controls.kualitasAset.errors?.required && form.controls.kualitasAset.touched" class="error">
+                                *Required
+                              </div>
+                            </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="form-group col">
+                                <label for="exampleInputEmail1">Nomor Aset</label>
+                                <input type="text" class="form-control" id="nomorAset" formControlName="nomorAset" aria-describedby="emailHelp" placeholder="Nomor Aset">
+                                <div *ngIf="form.controls.nomorAset.errors?.required && form.controls.nomorAset.touched" class="error">
+                                  *Required
+                                </div>
+                              </div>
+
+                              <div class="form-group col">
+                                <label for="exampleInputEmail1">Harga Perolehan</label>
+                                <input type="text" class="form-control" id="hargaPerolehan" formControlName="hargaPerolehan" aria-describedby="emailHelp" placeholder="Harga Perolehan">
+                                <div *ngIf="form.controls.hargaPerolehan.errors?.required && form.controls.hargaPerolehan.touched" class="error">
+                                  *Required
+                                </div>
+                              </div>
+
+                              <div class="form-group col">
+                                <label for="exampleInputEmail1">Akumulasi Susut</label>
+                                <input type="text" class="form-control" id="akumulasiSusut" formControlName="akumulasiSusut" aria-describedby="emailHelp" placeholder="Akumulasi Susut">
+                                <div *ngIf="form.controls.akumulasiSusut.errors?.required && form.controls.akumulasiSusut.touched" class="error">
+                                  *Required
+                                </div>
+                              </div>
+
+                              <div class="form-group col">
+                                <label for="exampleInputEmail1">Nilai Buku</label>
+                                <input type="text" class="form-control" id="nilaiBuku" formControlName="nilaiBuku" aria-describedby="emailHelp" placeholder="Nilai Buku">
+                                <div *ngIf="form.controls.nilaiBuku.errors?.required && form.controls.nilaiBuku.touched" class="error">
+                                  *Required
+                                </div>
+                              </div>
+                              </div>
+                    </div>
+              </div>
+              <div class="modal-footer" *ngIf="!loading">
+                  <button type="submit" class="btn btn-primary">Save</button>&nbsp;
+                  <button (click)="modal.close('Save click')" class="btn btn-danger">Cancel</button>      </div>
+              </form>
+
+
+            </ng-template>
+
+
+            <ng-template #myDialog let-modal>
+
+              <div class="modal-body">
+                  <div class="text-center" *ngIf="loading">
+                      <img src="assets/img/745.gif"/>
+                  </div>
+                  <div  *ngIf="!loading">
+                      Are you sure want to permanently delete this record ?
+                  </div>
+
+              </div>
+              <div class="modal-footer" *ngIf="!loading">
+                  <button (click)="modal.close('dodelete')" type="button" class="btn btn-danger btn-sm">Delete</button>&nbsp;
+                  <button (click)="modal.close('Save click')" class="btn btn-primary btn-sm">Cancel</button>
+              </div>
+
+
+
+            </ng-template>
+
+            <ngb-toast class="{{toast.className}}"
+            *ngFor="let toast of Toast.toasts"
+            [header]="toast.header" [autohide]="true" [delay]="toast.delay || 5000"
+            (hide)="Toast.remove(toast)"
+          >{{toast.body}}</ngb-toast>
+      </div>
+  </sb-card>
+</sb-layout-dashboard>

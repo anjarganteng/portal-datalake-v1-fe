@@ -1,0 +1,174 @@
+<sb-layout-dashboard>
+  <sb-dashboard-head title="{{title}}" [hideBreadcrumbs]="false"></sb-dashboard-head>
+          <div class="alert alert-success alert-dismissible fade show" role="alert"  *ngIf="alertSuccess">
+              <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"  *ngIf="alertError">
+              <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+
+            <div class="alert alert-info alert-dismissible fade show" role="alert"  *ngIf="alertInfo">
+              <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+
+      <sb-card>
+          <div class="card-header">
+              <div class="row">
+                  <div class="col-md-8">
+                      <fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon>{{title}} List
+                  </div>
+                  <div class="col-md-4 float-right">
+                    <button class="btn btn-primary"
+                    (click)="showAdd()"><i class="fa fa-plus" aria-hidden="true"></i> Add Data</button>
+                    &nbsp;
+                    
+                    <button class="btn btn-primary"
+                    (click)="getExcelData()"><i class="fa fa-download" aria-hidden="true"></i> Download</button>
+                   </div>
+                </div>
+
+          </div>
+      <div class="card-body">
+          <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"  class="table table-observer table-striped thead-dark">
+              <thead>
+                  <tr>
+                      <th scope="col">FLAG NASABAH</th>
+                      <th scope="col">TIPE NASABAH</th>
+                      <th scope="col">NO IDENTITAS</th>
+                      <th scope="col">CIF</th>
+                      <th scope="col">CIF JOIN</th>
+                      <th scope="col">TIPE JOIN</th>
+                      <th>Action</th>
+                  </tr>
+                  <tr  *ngFor="let data of dataTableTemp">
+                    <td>{{data.flagNasabah}}</td>
+                    <td>{{data.tipeNasabah}}</td>
+                    <td>{{data.noIdentitas}}</td>
+                    <td>{{data.cif}}</td>
+                    <td>{{data.cifJoin}}</td>
+                    <td>{{data.tipeJoin}}</td>
+                    <td>
+                      <div class='actions-buttons center' id=''>
+                        <i kind='edit' class='fa fa-edit pointer text-info' title='Edit' (click)="showEdit(data)"></i>&nbsp;&nbsp;
+                          <i kind='delete' class='fa fa-trash pointer text-danger' title='Delete' (click)="showDelete(data)" ></i>
+                      </div>
+                    </td>
+                </tr>
+              </thead>
+              <tbody >
+
+              </tbody>
+          </table>
+
+          <ng-template #mymodal let-modal>
+              <form  [formGroup]="form" (ngSubmit)="submit()">
+              <div class="modal-header" *ngIf="!loading">
+                <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <div class="text-center" *ngIf="loading">
+                      <img src="assets/img/745.gif"/>
+                  </div>
+                  <div  *ngIf="!loading">
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">FLAG NASABAH</label>
+                      <select class="form-control"  formControlName="flagNasabah" (change)="selectFlagNasabah($event)">
+                        <option value="0">0. New Cif</option>
+                        <option value="1">1. Existing Cif</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">TIPE NASABAH</label>
+                        <select class="form-control"  formControlName="tipeNasabah" (change)="selectTipeNasabah($event)">
+                          <option value="I">I. Individual / Perorangan</option>
+                          <option value="C">C. Corporate / Badan Hukum</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">NO IDENTITAS</label>
+                      <input type="text" class="form-control" id="noIdentitas" formControlName="noIdentitas" aria-describedby="emailHelp" placeholder="NO IDENTITAS" (blur)="onfocusEvent($event)">
+                      <div *ngIf="form.controls.noIdentitas.errors?.required && form.controls.noIdentitas.touched" class="error">
+                        *Required
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">CIF</label>
+                      <input type="text" class="form-control" id="cif" formControlName="cif" aria-describedby="emailHelp" placeholder="CIF">
+                      <div *ngIf="form.controls.cif.errors?.required && form.controls.cif.touched" class="error">
+                        *Required
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">CIF JOIN</label>
+                      <input type="text" class="form-control" id="cifJoin" formControlName="cifJoin" aria-describedby="emailHelp" placeholder="CIF JOIN">
+                      <div *ngIf="form.controls.cifJoin.errors?.required && form.controls.cifJoin.touched" class="error">
+                        *Required
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">TIPE JOIN</label>
+                        <select class="form-control"  formControlName="tipeJoin">
+                          <option value="AND">AND / Join Account AND</option>
+                          <option value="OR">OR / Join Account OR</option>
+                        </select>
+                    </div>
+                  </div>
+              </div>
+              <div class="modal-footer" *ngIf="!loading">
+                  <button type="submit" class="btn btn-primary">Save</button>&nbsp;
+                  <button type="button" class="btn btn-warning" (click)="anotherReset()">Reset</button>&nbsp;
+                  <button (click)="modal.close('Save click')" class="btn btn-danger">Cancel</button>      </div>
+              </form>
+
+
+            </ng-template>
+
+
+            <ng-template #myDialog let-modal>
+
+              <div class="modal-body">
+                  <div class="text-center" *ngIf="loading">
+                      <img src="assets/img/745.gif"/>
+                  </div>
+                  <div  *ngIf="!loading">
+                      Are you sure want to permanently delete this record ?
+                  </div>
+
+              </div>
+              <div class="modal-footer" *ngIf="!loading">
+                  <button (click)="modal.close('dodelete')" type="button" class="btn btn-danger btn-sm">Delete</button>&nbsp;
+                  <button (click)="modal.close('Save click')" class="btn btn-primary btn-sm">Cancel</button>
+              </div>
+
+
+
+            </ng-template>
+
+            <ngb-toast class="{{toast.className}}"
+            *ngFor="let toast of Toast.toasts"
+            [header]="toast.header" [autohide]="true" [delay]="toast.delay || 5000"
+            (hide)="Toast.remove(toast)"
+          >{{toast.body}}</ngb-toast>
+      </div>
+  </sb-card>
+</sb-layout-dashboard>

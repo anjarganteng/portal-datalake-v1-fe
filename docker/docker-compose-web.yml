@@ -1,0 +1,29 @@
+version: "3.3"
+services:
+  web-core:    
+    container_name: web-core
+    build:
+      context: .
+      dockerfile: dockerFile
+    image: ${REGISTRY_SERVER}id.co.telkomsigma/web-core:1.0.0-SNAPSHOT
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+        SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+#    healthcheck:
+#      test: ['CMD-SHELL', 'wget --quiet --spider http://telkomsigma-config_config:8888/health || exit 1' ]
+#      interval: 10s
+#      retries: 3
+    command: sh '/entrypoint-wrap.sh'
+    networks:
+      default:
+
+networks:
+  default:
+    external:
+      name: telkomsigma

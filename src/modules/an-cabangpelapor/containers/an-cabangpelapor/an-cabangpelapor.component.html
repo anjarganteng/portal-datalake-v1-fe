@@ -1,0 +1,196 @@
+<sb-layout-dashboard>
+    <sb-dashboard-head title="{{title}}" [hideBreadcrumbs]="false"></sb-dashboard-head>
+            <div class="alert alert-success alert-dismissible fade show" role="alert"  *ngIf="alertSuccess">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+              <div class="alert alert-danger alert-dismissible fade show" role="alert"  *ngIf="alertError">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+
+              <div class="alert alert-info alert-dismissible fade show" role="alert"  *ngIf="alertInfo">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+
+        <sb-card>
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon>{{title}} List
+                    </div>
+                    <div class="col-md-4 float-right">
+                      <button class="btn btn-primary"
+                      (click)="showAdd()"><i class="fa fa-plus" aria-hidden="true"></i> Add Data</button>
+                      &nbsp;
+                      &nbsp;
+                      &nbsp;
+                      &nbsp;
+                      <button class="btn btn-primary"
+                      (click)="getExcelData()"><i class="fa fa-download" aria-hidden="true"></i> Download</button>
+                     </div>
+                  </div>
+
+            </div>
+        <div class="card-body">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"  class="table table-observer table-striped thead-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">Status Data</th>
+                        <th scope="col">Kode Cabang</th>
+                        <th scope="col">Kode Cabang Utama</th>
+                        <th scope="col">Kode Coa</th>
+                        <th scope="col">Nama Cabang</th>
+                        <th scope="col">Alias Cabang</th>
+                        <th scope="col">Alias Wilayah</th>
+                        <th scope="col">Kode Cab Bi</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr  *ngFor="let data of dataTableTemp">
+                      <td>{{data.statusData}}</td>
+                      <td>{{data.kodeCabang}}</td>
+                      <td>{{data.kodeCabangUtama}}</td>
+                      <td>{{data.kodeCoa}}</td>
+                      <td>{{data.namaCabang}}</td>
+                      <td>{{data.aliasCabang}}</td>
+                      <td>{{data.aliasWilayah}}</td>
+                      <td>{{data.kodeCabBi}}</td>
+                      <td>
+                          <div class='actions-buttons center' id=''>
+                              <i kind='edit' class='fa fa-edit pointer text-info' title='Edit' (click)="showEdit(data)"></i>&nbsp;&nbsp;
+                              <i kind='delete' class='fa fa-trash pointer text-danger' title='Delete' (click)="showDelete(data)" ></i>
+                          </div>
+                      </td>
+                  </tr>
+                </thead>
+                <tbody >
+
+                </tbody>
+            </table>
+
+            <ng-template #mymodal let-modal>
+                <form  [formGroup]="form" (ngSubmit)="submit()">
+                <div class="modal-header" *ngIf="!loading">
+                  <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center" *ngIf="loading">
+                        <img src="assets/img/745.gif"/>
+                    </div>
+                    <div  *ngIf="!loading">
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Status Data</label>
+                        <input type="text" class="form-control" id="statusData" formControlName="statusData" aria-describedby="emailHelp" placeholder="Status Data">
+                        <div *ngIf="form.controls.statusData.errors?.required && form.controls.statusData.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Kode Cabang</label>
+                        <input type="text" class="form-control" id="kodeCabang" formControlName="kodeCabang" aria-describedby="emailHelp" placeholder="Kode Cabang">
+                        <div *ngIf="form.controls.kodeCabang.errors?.required && form.controls.kodeCabang.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Kode Cabang Utama</label>
+                        <input type="text" class="form-control" id="kodeCabangUtama" formControlName="kodeCabangUtama" aria-describedby="emailHelp" placeholder="Kode Cabang Utama">
+                        <div *ngIf="form.controls.kodeCabangUtama.errors?.required && form.controls.kodeCabangUtama.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Kode Coa</label>
+                        <input type="text" class="form-control" id="kodeCoa" formControlName="kodeCoa" aria-describedby="emailHelp" placeholder="Kode Coa">
+                        <div *ngIf="form.controls.kodeCoa.errors?.required && form.controls.kodeCoa.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Nama Cabang</label>
+                        <input type="text" class="form-control" id="namaCabang" formControlName="namaCabang" aria-describedby="emailHelp" placeholder="Nama Cabang">
+                        <div *ngIf="form.controls.namaCabang.errors?.required && form.controls.namaCabang.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Alias Cabang</label>
+                        <input type="text" class="form-control" id="aliasCabang" formControlName="aliasCabang" aria-describedby="emailHelp" placeholder="Alias Cabang">
+                        <div *ngIf="form.controls.aliasCabang.errors?.required && form.controls.aliasCabang.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Alias Wilayah</label>
+                        <input type="text" class="form-control" id="aliasWilayah" formControlName="aliasWilayah" aria-describedby="emailHelp" placeholder="Alias Wilayah">
+                        <div *ngIf="form.controls.aliasWilayah.errors?.required && form.controls.aliasWilayah.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Kode Cab Bi</label>
+                        <input type="text" class="form-control" id="kodeCabBi" formControlName="kodeCabBi" aria-describedby="emailHelp" placeholder="Kode Cab Bi">
+                        <div *ngIf="form.controls.kodeCabBi.errors?.required && form.controls.kodeCabBi.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer" *ngIf="!loading">
+                    <button type="submit" class="btn btn-primary">Save</button>&nbsp;
+                    <button (click)="modal.close('Save click')" class="btn btn-danger">Cancel</button>      </div>
+                </form>
+
+
+              </ng-template>
+
+
+              <ng-template #myDialog let-modal>
+
+                <div class="modal-body">
+                    <div class="text-center" *ngIf="loading">
+                        <img src="assets/img/745.gif"/>
+                    </div>
+                    <div  *ngIf="!loading">
+                        Are you sure want to permanently delete this record ?
+                    </div>
+
+                </div>
+                <div class="modal-footer" *ngIf="!loading">
+                    <button (click)="modal.close('dodelete')" type="button" class="btn btn-danger btn-sm">Delete</button>&nbsp;
+                    <button (click)="modal.close('Save click')" class="btn btn-primary btn-sm">Cancel</button>
+                </div>
+
+
+
+              </ng-template>
+
+              <ngb-toast class="{{toast.className}}"
+              *ngFor="let toast of Toast.toasts"
+              [header]="toast.header" [autohide]="true" [delay]="toast.delay || 5000"
+              (hide)="Toast.remove(toast)"
+            >{{toast.body}}</ngb-toast>
+        </div>
+    </sb-card>
+</sb-layout-dashboard>

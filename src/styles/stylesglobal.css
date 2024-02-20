@@ -1,0 +1,83 @@
+.dataTables_empty {
+    display: none;
+  }
+
+  .pointer{
+      cursor: pointer !important;
+  }
+
+.modal-dialog{
+    padding-top: 50px;
+}
+
+.session-modal-container .modal-backdrop {
+    z-index: 1100;
+  }
+  .session-modal-container .session-dialog {
+    z-index: 1100;
+  }
+  .session-modal-container .modal-dialog {
+    margin: 30vh auto;
+  }
+
+  .modal-open .modal{
+      z-index: 1100;
+  }
+
+  .select2-dropdown {
+    background-color: white;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    left: -100000px;
+    width: 100%;
+    z-index: 1151 !important;
+}
+
+
+  ngb-toast {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 0.5em;
+    z-index: 1200;
+    min-width: 250px;
+  }
+
+  #layoutAuthentication_content{
+ /* The image used */
+ background-image: url("assets/img/bg.jpeg");
+
+ /* Full height */
+ height: 100%;
+
+ /* Center and scale the image nicely */
+ background-position: center;
+ background-repeat: no-repeat;
+ background-size: cover;
+}
+
+
+
+.table-observer{
+    width: 100% !important;
+}
+
+.table-observer tr{
+    background-color: #ffffff;
+}
+
+.table-observer tr:hover{
+    background-color: #f7f7f7;
+}
+
+
+.table-observer tr td{
+    border-bottom: thin  #dddddd !important;
+}
+
+input { 
+  text-transform: uppercase;
+}

@@ -1,0 +1,125 @@
+<sb-layout-dashboard>
+    <sb-dashboard-head title="{{title}}" [hideBreadcrumbs]="false"></sb-dashboard-head>
+            <div class="alert alert-success alert-dismissible fade show" role="alert"  *ngIf="alertSuccess">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+              <div class="alert alert-danger alert-dismissible fade show" role="alert"  *ngIf="alertError">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+
+              <div class="alert alert-info alert-dismissible fade show" role="alert"  *ngIf="alertInfo">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+
+        <sb-card>
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon>{{title}} List
+                    </div>
+                    <div class="col-md-4 float-right">
+                      <button class="btn btn-primary"
+                      (click)="showAdd()"><i class="fa fa-plus" aria-hidden="true"></i> Add Data</button>
+                     </div>
+                  </div>
+
+            </div>
+        <div class="card-body">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"  class="table table-observer table-striped thead-dark">
+                <thead>
+                    <tr>
+                      <tr>
+                        <th scope="col">UUID Branch</th>
+                        <th scope="col">Name Branch</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr  *ngFor="let data of dataTableTemp">
+                      <td>{{data.uuidBranch}}</td>
+                      <td>{{data.nameBranch}}</td>
+                      <td>
+                          <div class='actions-buttons center' id=''>
+                              <i kind='edit' class='fa fa-edit pointer text-info' title='Edit' (click)="showEdit(data)"></i>&nbsp;&nbsp;
+                              <i kind='delete' class='fa fa-trash pointer text-danger' title='Delete' (click)="showDelete(data)" ></i>
+                          </div>
+                      </td>
+                    </tr>
+                </thead>
+                <tbody >
+
+                </tbody>
+            </table>
+
+            <ng-template #mymodal let-modal>
+                <form  [formGroup]="form" (ngSubmit)="submit()">
+                <div class="modal-header" *ngIf="!loading">
+                  <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center" *ngIf="loading">
+                        <img src="assets/img/745.gif"/>
+                    </div>
+                    <div  *ngIf="!loading">
+                        
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Name Branch</label>
+                          <input type="text" class="form-control" id="nameBranch" formControlName="nameBranch" aria-describedby="emailHelp" placeholder="Name Branch">
+                          <div *ngIf="form.controls.nameBranch.errors?.required && form.controls.nameBranch.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer" *ngIf="!loading">
+                    <button type="submit" class="btn btn-primary">Save</button>&nbsp;
+                    <button (click)="modal.close('Save click')" class="btn btn-danger">Cancel</button>      </div>
+                </form>
+
+
+              </ng-template>
+
+
+              <ng-template #myDialog let-modal>
+
+                <div class="modal-body">
+                    <div class="text-center" *ngIf="loading">
+                        <img src="assets/img/745.gif"/>
+                    </div>
+                    <div  *ngIf="!loading">
+                        Are you sure want to permanently delete this record ?
+                    </div>
+
+                </div>
+                <div class="modal-footer" *ngIf="!loading">
+                    <button (click)="modal.close('dodelete')" type="button" class="btn btn-danger btn-sm">Delete</button>&nbsp;
+                    <button (click)="modal.close('Save click')" class="btn btn-primary btn-sm">Cancel</button>
+                </div>
+
+
+
+              </ng-template>
+
+              <ngb-toast class="{{toast.className}}"
+              *ngFor="let toast of Toast.toasts"
+              [header]="toast.header" [autohide]="true" [delay]="toast.delay || 5000"
+              (hide)="Toast.remove(toast)"
+            >{{toast.body}}</ngb-toast>
+        </div>
+    </sb-card>
+</sb-layout-dashboard>

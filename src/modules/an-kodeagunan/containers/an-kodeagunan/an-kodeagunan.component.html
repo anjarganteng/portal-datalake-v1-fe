@@ -1,0 +1,346 @@
+<sb-layout-dashboard>
+    <sb-dashboard-head title="{{title}}" [hideBreadcrumbs]="false"></sb-dashboard-head>
+            <div class="alert alert-success alert-dismissible fade show" role="alert"  *ngIf="alertSuccess">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+              <div class="alert alert-danger alert-dismissible fade show" role="alert"  *ngIf="alertError">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+
+              <div class="alert alert-info alert-dismissible fade show" role="alert"  *ngIf="alertInfo">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+
+        <sb-card>
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon>{{title}} List
+                    </div>
+                    <div class="col-md-4 float-right">
+                      <button class="btn btn-primary"
+                      (click)="showAdd()"><i class="fa fa-plus" aria-hidden="true"></i> Add Data</button>
+                      &nbsp;
+                      &nbsp;
+                      &nbsp;
+                      &nbsp;
+                      <button class="btn btn-primary"
+                      (click)="getExcelData()"><i class="fa fa-download" aria-hidden="true"></i> Download</button>
+                     </div>
+                  </div>
+
+            </div>
+        <div class="card-body">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"  class="table table-observer table-striped thead-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">No</th>
+                        <th scope="col">Kode A.Core</th>
+                        <th scope="col">Kode A.Antasena</th>
+                        <th scope="col">Kode A.Lps</th>
+                        <th scope="col">Kode A.Slik</th>
+                        <th scope="col">Keterangan</th>
+                        <th scope="col">Persentase</th>
+                        <th scope="col">Jw.1</th>
+                        <th scope="col">Persen.1</th>
+                        <th scope="col">Jw.2</th>
+                        <th scope="col">Persen.2</th>
+                        <th scope="col">Jw.3</th>
+                        <th scope="col">Persen.3</th>
+                        <th scope="col">Jw.4</th>
+                        <th scope="col">Persen.4</th>
+                        <th scope="col">Jw.5</th>
+                        <th scope="col">Persen.5</th>
+                        <th scope="col">Jw.6</th>
+                        <th scope="col">Persen.6</th>
+                        <th scope="col">Jw.7</th>
+                        <th scope="col">Persen.7</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr  *ngFor="let data of dataTableTemp">
+                      <td>{{data.no}}</td>
+                      <td>{{data.kodeAgunanCore}}</td>
+                      <td>{{data.kodeAgunanAntasena}}</td>
+                      <td>{{data.kodeAgunanLps}}</td>
+                      <td>{{data.kodeAgunanSlik}}</td>
+                      <td>{{data.keterangan}}</td>
+                      <td>{{data.nilaiPersentase}}</td>
+                      <td>{{data.jw1}}</td>
+                      <td>{{data.persen1}}</td>
+                      <td>{{data.jw2}}</td>
+                      <td>{{data.persen2}}</td>
+                      <td>{{data.jw3}}</td>
+                      <td>{{data.persen3}}</td>
+                      <td>{{data.jw4}}</td>
+                      <td>{{data.persen4}}</td>
+                      <td>{{data.jw5}}</td>
+                      <td>{{data.persen5}}</td>
+                      <td>{{data.jw6}}</td>
+                      <td>{{data.persen6}}</td>
+                      <td>{{data.jw7}}</td>
+                      <td>{{data.persen7}}</td>
+                      <td>
+                        <div class='actions-buttons center' id=''>
+                          <i kind='edit' class='fa fa-edit pointer text-info' title='Edit' (click)="showEdit(data)"></i>&nbsp;&nbsp;
+                            <i kind='delete' class='fa fa-trash pointer text-danger' title='Delete' (click)="showDelete(data)" ></i>
+                        </div>
+                      </td>
+                  </tr>
+                </thead>
+                <tbody >
+					
+                </tbody>
+            </table>
+
+            <ng-template #mymodal let-modal>
+                <form  [formGroup]="form" (ngSubmit)="submit()">
+                <div class="modal-header" *ngIf="!loading">
+                  <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+                <div class="modal-body" style="height: 450px; overflow-y: scroll">
+                    <div class="text-center" *ngIf="loading">
+                        <img src="assets/img/745.gif"/>
+                    </div>
+                    <div  *ngIf="!loading">
+                      <div class="row">
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">No</label>
+                            <input type="text" class="form-control" id="no" formControlName="no" aria-describedby="emailHelp" placeholder="No">
+                            <div *ngIf="form.controls.no.errors?.required && form.controls.no.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Kode A.Core</label>
+                            <input type="text" class="form-control" id="kodeAgunanCore" formControlName="kodeAgunanCore" aria-describedby="emailHelp" placeholder="Kode A.Core">
+                            <div *ngIf="form.controls.kodeAgunanCore.errors?.required && form.controls.kodeAgunanCore.touched" class="error">
+                              *Required
+                            </div>
+                         </div>
+                      </div>
+
+
+                      <div class="row">
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Kode A.Antasena</label>
+                            <input type="text" class="form-control" id="kodeAgunanAntasena" formControlName="kodeAgunanAntasena" aria-describedby="emailHelp" placeholder="Kode A.Antasena">
+                            <div *ngIf="form.controls.kodeAgunanAntasena.errors?.required && form.controls.kodeAgunanAntasena.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Kode A.Lps</label>
+                            <input type="text" class="form-control" id="kodeAgunanLps" formControlName="kodeAgunanLps" aria-describedby="emailHelp" placeholder="Kode A.Lps">
+                            <div *ngIf="form.controls.kodeAgunanLps.errors?.required && form.controls.kodeAgunanLps.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Kode A.Slik</label>
+                            <input type="text" class="form-control" id="kodeAgunanSlik" formControlName="kodeAgunanSlik" aria-describedby="emailHelp" placeholder="Kode A.Slik">
+                            <div *ngIf="form.controls.kodeAgunanSlik.errors?.required && form.controls.kodeAgunanSlik.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+                      </div>
+
+                      
+                      <div class="row">
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Keterangan</label>
+                          <input type="text" class="form-control" id="keterangan" formControlName="keterangan" aria-describedby="emailHelp" placeholder="Keterangan">
+                          <div *ngIf="form.controls.keterangan.errors?.required && form.controls.keterangan.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+                      
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Persentase</label>
+                          <input type="text" class="form-control" id="nilaiPersentase" formControlName="nilaiPersentase" aria-describedby="emailHelp" placeholder="Persentase">
+                          <div *ngIf="form.controls.nilaiPersentase.errors?.required && form.controls.nilaiPersentase.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+                      </div>
+
+                    
+                      <div class="row">
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Jw.1</label>
+                          <input type="text" class="form-control" id="jw1" formControlName="jw1" aria-describedby="emailHelp" placeholder="Jw.1">
+                          <div *ngIf="form.controls.jw1.errors?.required && form.controls.jw1.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Persen.1</label>
+                          <input type="text" class="form-control" id="persen1" formControlName="persen1" aria-describedby="emailHelp" placeholder="Persen.1">
+                          <div *ngIf="form.controls.persen1.errors?.required && form.controls.persen1.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Jw.2</label>
+                          <input type="text" class="form-control" id="jw2" formControlName="jw2" aria-describedby="emailHelp" placeholder="Jw.2">
+                          <div *ngIf="form.controls.jw2.errors?.required && form.controls.jw2.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Persen.2</label>
+                          <input type="text" class="form-control" id="persen2" formControlName="persen2" aria-describedby="emailHelp" placeholder="Persen.2">
+                          <div *ngIf="form.controls.persen2.errors?.required && form.controls.persen2.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Jw.3</label>
+                            <input type="text" class="form-control" id="jw3" formControlName="jw3" aria-describedby="emailHelp" placeholder="Jw.3">
+                            <div *ngIf="form.controls.jw3.errors?.required && form.controls.jw3.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Persen.3</label>
+                            <input type="text" class="form-control" id="persen3" formControlName="persen3" aria-describedby="emailHelp" placeholder="Persen.3">
+                            <div *ngIf="form.controls.persen3.errors?.required && form.controls.persen3.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+					
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Jw.4</label>
+                            <input type="text" class="form-control" id="jw4" formControlName="jw4" aria-describedby="emailHelp" placeholder="Jw.4">
+                            <div *ngIf="form.controls.jw4.errors?.required && form.controls.jw4.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Persen.4</label>
+                            <input type="text" class="form-control" id="persen4" formControlName="persen4" aria-describedby="emailHelp" placeholder="Persen.4">
+                            <div *ngIf="form.controls.persen4.errors?.required && form.controls.persen4.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+                        </div>
+
+
+                      <div class="row">
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Jw.5</label>
+                            <input type="text" class="form-control" id="jw5" formControlName="jw5" aria-describedby="emailHelp" placeholder="Jw.5">
+                            <div *ngIf="form.controls.jw5.errors?.required && form.controls.jw5.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Persen.5</label>
+                            <input type="text" class="form-control" id="persen5" formControlName="persen5" aria-describedby="emailHelp" placeholder="Persen.5">
+                            <div *ngIf="form.controls.persen5.errors?.required && form.controls.persen5.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Jw.6</label>
+                            <input type="text" class="form-control" id="jw6" formControlName="jw6" aria-describedby="emailHelp" placeholder="Jw.6">
+                            <div *ngIf="form.controls.jw6.errors?.required && form.controls.jw6.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Persen.6</label>
+                            <input type="text" class="form-control" id="persen6" formControlName="persen6" aria-describedby="emailHelp" placeholder="Persen.6">
+                            <div *ngIf="form.controls.persen6.errors?.required && form.controls.persen6.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+                      </div>
+
+                      
+                      <div class="row">
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Jw.7</label>
+                          <input type="text" class="form-control" id="jw7" formControlName="jw7" aria-describedby="emailHelp" placeholder="Jw.7">
+                          <div *ngIf="form.controls.jw7.errors?.required && form.controls.jw7.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">Persen.7</label>
+                          <input type="text" class="form-control" id="persen7" formControlName="persen7" aria-describedby="emailHelp" placeholder="Persen.7">
+                          <div *ngIf="form.controls.persen7.errors?.required && form.controls.persen7.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                </div>
+                <div class="modal-footer" *ngIf="!loading">
+                    <button type="submit" class="btn btn-primary">Save</button>&nbsp;
+                    <button (click)="modal.close('Save click')" class="btn btn-danger">Cancel</button>      </div>
+                </form>
+
+
+              </ng-template>
+
+
+              <ng-template #myDialog let-modal>
+
+                <div class="modal-body">
+                    <div class="text-center" *ngIf="loading">
+                        <img src="assets/img/745.gif"/>
+                    </div>
+                    <div  *ngIf="!loading">
+                        Are you sure want to permanently delete this record ?
+                    </div>
+
+                </div>
+                <div class="modal-footer" *ngIf="!loading">
+                    <button (click)="modal.close('dodelete')" type="button" class="btn btn-danger btn-sm">Delete</button>&nbsp;
+                    <button (click)="modal.close('Save click')" class="btn btn-primary btn-sm">Cancel</button>
+                </div>
+
+
+
+              </ng-template>
+
+              <ngb-toast class="{{toast.className}}"
+              *ngFor="let toast of Toast.toasts"
+              [header]="toast.header" [autohide]="true" [delay]="toast.delay || 5000"
+              (hide)="Toast.remove(toast)"
+            >{{toast.body}}</ngb-toast>
+        </div>
+    </sb-card>
+</sb-layout-dashboard>
+
+

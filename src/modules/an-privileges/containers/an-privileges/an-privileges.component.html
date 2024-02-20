@@ -1,0 +1,154 @@
+<sb-layout-dashboard>
+    <sb-dashboard-head title="{{title}}" [hideBreadcrumbs]="false"></sb-dashboard-head>
+            <div class="alert alert-success alert-dismissible fade show" role="alert"  *ngIf="alertSuccess">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+              <div class="alert alert-danger alert-dismissible fade show" role="alert"  *ngIf="alertError">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+
+              <div class="alert alert-info alert-dismissible fade show" role="alert"  *ngIf="alertInfo">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+
+        <sb-card>
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon>{{title}} List
+                    </div>
+                    <div class="col-md-4 float-right">
+                     
+                     </div>
+                  </div>
+
+            </div>
+        <div class="card-body">
+          <form  [formGroup]="form" (ngSubmit)="submit()">
+          <div class="form-group">
+            <div class="col-sm-12">
+              <div class="col-sm-6">
+                <label for="exampleInputPassword1">Role</label>
+                <select  id="uuidRoles" formControlName="uuidRoles" class="form-control" #mySelect
+                (change)='onOptionsSelected(mySelect.value)'>
+                    <ng-container *ngFor="let dt of dataData;">
+                        <option  [value]="dt.uuidRoles">
+                            {{dt.nameRoles}}
+                          </option>
+                    </ng-container>
+    
+                </select>
+                <div *ngIf="form.controls.uuidRoles.errors?.required && form.controls.uuidRoles.touched" class="error">
+                    *Required
+                  </div>              
+              </div>
+              <div class="col-sm-4">
+                <button type="submit" class="btn btn-primary">Save</button>&nbsp;
+              </div>
+            </div>
+          </div>
+            <table   class="table table-observer table-striped thead-dark">
+                <thead>
+                    <tr>
+                        <th>Module</th>
+                        <th>Can Download</th>
+                        <th>Can Read</th>
+                        <th>Can Regenerate</th>
+                        <th>Can Update</th>
+                        <th>Can Upload</th>
+                        
+                    </tr>
+                </thead>
+                <tbody  formArrayName="menuList">
+                  <ng-container *ngFor="let item of form.get('menuList').controls; let i = index;">
+                    <tr [formGroupName]="i">
+                      <td> <input formControlName="name" readonly class="form-control" placeholder="Item name"></td>
+                      <td class="text-center"><input type="checkbox" class="form-check-input" formControlName="canDownload" id="candownload"></td>
+                      <td class="text-center"><input type="checkbox" class="form-check-input" formControlName="canRead" id="canread"></td>
+                      <td class="text-center"><input type="checkbox" class="form-check-input" formControlName="canRegenerate" id="canregenerate"></td>
+                      <td class="text-center"><input type="checkbox" class="form-check-input" formControlName="canUpdate" id="canUpdate"></td>
+                      <td class="text-center"><input type="checkbox" class="form-check-input" formControlName="canUpload" id="canupload"></td>
+                    </tr>
+                  </ng-container>
+	
+                </tbody>
+            </table>
+            </form>
+            <ng-template #mymodal let-modal>
+             
+                <div class="modal-header" *ngIf="!loading">
+                  <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center" *ngIf="loading">
+                        <img src="assets/img/745.gif"/>
+                    </div>
+                    <div  *ngIf="!loading">
+					<div class="row">
+						<div class="form-group col">
+							<label for="exampleInputEmail1">Application Type Code</label>
+							<input type="text" class="form-control" id="idApplicationType" formControlName="idApplicationType" aria-describedby="emailHelp" placeholder="Application Type Code">
+							<div *ngIf="form.controls.idApplicationType.errors?.required && form.controls.idApplicationType.touched" class="error">
+							  *Required
+							</div>
+						  </div>
+						  <div class="form-group col">
+							<label for="exampleInputPassword1">Application Type Name</label>
+							<input type="text"  class="form-control" id="applicationTypeName" formControlName="applicationTypeName" placeholder="Application Type Name">
+						  </div>
+					</div>
+                    </div>
+
+                </div>
+                <div class="modal-footer" *ngIf="!loading">
+                    <button type="submit" class="btn btn-primary">Save</button>&nbsp;
+                    <button (click)="modal.close('Save click')" class="btn btn-danger">Cancel</button>      </div>
+              
+
+
+              </ng-template>
+
+
+              <ng-template #myDialog let-modal>
+
+                <div class="modal-body">
+                    <div class="text-center" *ngIf="loading">
+                        <img src="assets/img/745.gif"/>
+                    </div>
+                    <div  *ngIf="!loading">
+                        Are you sure want to permanently delete this record ?
+                    </div>
+
+                </div>
+                <div class="modal-footer" *ngIf="!loading">
+                    <button (click)="modal.close('dodelete')" type="button" class="btn btn-danger btn-sm">Delete</button>&nbsp;
+                    <button (click)="modal.close('Save click')" class="btn btn-primary btn-sm">Cancel</button>
+                </div>
+
+
+
+              </ng-template>
+
+              <ngb-toast class="{{toast.className}}"
+              *ngFor="let toast of Toast.toasts"
+              [header]="toast.header" [autohide]="true" [delay]="toast.delay || 5000"
+              (hide)="Toast.remove(toast)"
+            >{{toast.body}}</ngb-toast>
+        </div>
+    </sb-card>
+</sb-layout-dashboard>

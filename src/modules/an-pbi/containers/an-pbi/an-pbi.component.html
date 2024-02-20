@@ -1,0 +1,292 @@
+<sb-layout-dashboard>
+    <sb-dashboard-head title="{{title}}" [hideBreadcrumbs]="false"></sb-dashboard-head>
+            <div class="alert alert-success alert-dismissible fade show" role="alert"  *ngIf="alertSuccess">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+              <div class="alert alert-danger alert-dismissible fade show" role="alert"  *ngIf="alertError">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+
+              <div class="alert alert-info alert-dismissible fade show" role="alert"  *ngIf="alertInfo">
+                <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+
+        <sb-card>
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon>{{title}} List
+                    </div>
+                    <div class="col-md-4 float-right">
+                      <button class="btn btn-primary"
+                      (click)="showAdd()"><i class="fa fa-plus" aria-hidden="true"></i> Add Data</button>
+                      &nbsp;
+                      
+		      <button class="btn btn-primary"
+                      (click)="getExcelData()"><i class="fa fa-download" aria-hidden="true"></i> Download</button>
+                      &nbsp;
+
+                      <button class="btn btn-primary"
+                      (click)="regenerateData()"><i class="fa fa-refresh" aria-hidden="true"></i> Regenerate</button>
+                     </div>
+                  </div>
+
+            </div>
+        <div class="card-body">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"  class="table table-observer table-striped thead-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">Kode Coa</th>
+                        <th scope="col">Deskripsi Coa</th>
+                        <th scope="col">Dalam Luar Negeri</th>
+                        <th scope="col">Jenis</th>
+                        <th scope="col">Sandi Jenis</th>
+                        <th scope="col">Branch</th>
+                        <th scope="col">Wilayah</th>
+                        <th scope="col">Mata Uang</th>
+                        <th scope="col">Hub Dgn Bank</th>
+                        <th scope="col">Sandi Bank</th>
+                        <th scope="col">No Rekening</th>
+                        <th scope="col">Mulai</th>
+                        <th scope="col">Jatuh Tempo</th>
+                        <th scope="col">Klasifikasi Aset</th>
+                        <th scope="col">Kualitas Aset</th>
+                        <th scope="col">Suku Bunga</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr  *ngFor="let data of dataTableTemp">
+                        <td>{{data.kodeCoa}}</td>
+                        <td>{{data.deskripsiCoa}}</td>
+                        <td>{{data.dalamLuarNegeri}}</td>
+                        <td>{{data.jenis}}</td>
+                        <td>{{data.sandiJenis}}</td>
+                        <td>{{data.branch}}</td>
+                        <td>{{data.wilayah}}</td>
+                        <td>{{data.mataUang}}</td>
+                        <td>{{data.hubDgnBank}}</td>
+                        <td>{{data.sandiBank}}</td>
+                        <td>{{data.noRekening}}</td>
+                        <td>{{data.mulai}}</td>
+                        <td>{{data.jatuhTempo}}</td>
+                        <td>{{data.klasifikasiAset}}</td>
+                        <td>{{data.kualitasAset}}</td>
+                        <td>{{data.sukuBunga}}</td>
+                        <td>
+                            <div class='actions-buttons center' id=''>
+                                <i kind='edit' class='fa fa-edit pointer text-info' title='Edit' (click)="showEdit(data)"></i>&nbsp;&nbsp;
+                                <i kind='delete' class='fa fa-trash pointer text-danger' title='Delete' (click)="showDelete(data)" ></i>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                </thead>
+                <tbody >
+                  
+                </tbody>
+            </table>
+
+            <ng-template #mymodal let-modal>
+                <form  [formGroup]="form" (ngSubmit)="submit()">
+                <div class="modal-header" *ngIf="!loading">
+                  <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center" *ngIf="loading">
+                        <img src="assets/img/745.gif"/>
+                    </div>
+                    <div  *ngIf="!loading">
+                        <div class="row">
+                          <div class="form-group col">
+                              <label for="exampleInputEmail1">Kode Coa</label>
+                              <input type="text" class="form-control" id="kodeCoa" formControlName="kodeCoa" aria-describedby="emailHelp" placeholder="Kode Coa">
+                              <div *ngIf="form.controls.kodeCoa.errors?.required && form.controls.kodeCoa.touched" class="error">
+                                *Required
+                              </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Deskripsi Coa</label>
+                            <input type="text" class="form-control" id="deskripsiCoa" formControlName="deskripsiCoa" aria-describedby="emailHelp" placeholder="Deskripsi Coa">
+                            <div *ngIf="form.controls.deskripsiCoa.errors?.required && form.controls.deskripsiCoa.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Dalam Luar Negeri</label>
+                            <input type="text" class="form-control" id="dalamLuarNegeri" formControlName="dalamLuarNegeri" aria-describedby="emailHelp" placeholder="Dalam Luar Negeri">
+                            <div *ngIf="form.controls.dalamLuarNegeri.errors?.required && form.controls.dalamLuarNegeri.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="row">
+                          <div class="form-group col">
+                              <label for="exampleInputEmail1">Jenis</label>
+                              <input type="text" class="form-control" id="jenis" formControlName="jenis" aria-describedby="emailHelp" placeholder="Jenis">
+                              <div *ngIf="form.controls.jenis.errors?.required && form.controls.jenis.touched" class="error">
+                                *Required
+                              </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Sandi Jenis</label>
+                            <input type="text" class="form-control" id="sandiJenis" formControlName="sandiJenis" aria-describedby="emailHelp" placeholder="Sandi Jenis">
+                            <div *ngIf="form.controls.sandiJenis.errors?.required && form.controls.sandiJenis.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Branch</label>
+                            <input type="text" class="form-control" id="branch" formControlName="branch" aria-describedby="emailHelp" placeholder="Branch">
+                            <div *ngIf="form.controls.branch.errors?.required && form.controls.branch.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="row">
+                          <div class="form-group col">
+                              <label for="exampleInputEmail1">Wilayah</label>
+                              <input type="text" class="form-control" id="wilayah" formControlName="wilayah" aria-describedby="emailHelp" placeholder="Wilayah">
+                              <div *ngIf="form.controls.wilayah.errors?.required && form.controls.wilayah.touched" class="error">
+                                *Required
+                              </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Mata Uang</label>
+                            <input type="text" class="form-control" id="mataUang" formControlName="mataUang" aria-describedby="emailHelp" placeholder="Mata Uang">
+                            <div *ngIf="form.controls.mataUang.errors?.required && form.controls.mataUang.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Hub Dgn Bank</label>
+                            <input type="text" class="form-control" id="hubDgnBank" formControlName="hubDgnBank" aria-describedby="emailHelp" placeholder="Hub Dgn Bank">
+                            <div *ngIf="form.controls.hubDgnBank.errors?.required && form.controls.hubDgnBank.touched" class="error">
+                              *Required
+                            </div>
+                          </div>    
+                        </div>
+
+
+                        <div class="row">
+                          <div class="form-group col">
+                              <label for="exampleInputEmail1">Sandi Bank</label>
+                              <input type="text" class="form-control" id="sandiBank" formControlName="sandiBank" aria-describedby="emailHelp" placeholder="Sandi Bank">
+                              <div *ngIf="form.controls.sandiBank.errors?.required && form.controls.sandiBank.touched" class="error">
+                                *Required
+                              </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">No Rekening</label>
+                            <input type="text" class="form-control" id="noRekening" formControlName="noRekening" aria-describedby="emailHelp" placeholder="No Rekening">
+                            <div *ngIf="form.controls.noRekening.errors?.required && form.controls.noRekening.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Mulai</label>
+                            <input type="date" class="form-control" id="mulai" formControlName="mulai" aria-describedby="emailHelp" placeholder="Mulai">
+                            <div *ngIf="form.controls.mulai.errors?.required && form.controls.mulai.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="row">
+                          <div class="form-group col">
+                              <label for="exampleInputEmail1">Jatuh Tempo</label>
+                              <input type="date" class="form-control" id="jatuhTempo" formControlName="jatuhTempo" aria-describedby="emailHelp" placeholder="Jatuh Tempo">
+                              <div *ngIf="form.controls.jatuhTempo.errors?.required && form.controls.jatuhTempo.touched" class="error">
+                                *Required
+                              </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Klasifikasi Aset</label>
+                            <input type="text" class="form-control" id="klasifikasiAset" formControlName="klasifikasiAset" aria-describedby="emailHelp" placeholder="Klasifikasi Aset">
+                            <div *ngIf="form.controls.klasifikasiAset.errors?.required && form.controls.klasifikasiAset.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Kualitas Aset</label>
+                            <input type="text" class="form-control" id="kualitasAset" formControlName="kualitasAset" aria-describedby="emailHelp" placeholder="Kualitas Aset">
+                            <div *ngIf="form.controls.kualitasAset.errors?.required && form.controls.kualitasAset.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+
+                          <div class="form-group col">
+                            <label for="exampleInputEmail1">Suku Bunga</label>
+                            <input type="text" class="form-control" id="sukuBunga" formControlName="sukuBunga" aria-describedby="emailHelp" placeholder="Suku Bunga">
+                            <div *ngIf="form.controls.sukuBunga.errors?.required && form.controls.sukuBunga.touched" class="error">
+                              *Required
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+                <div class="modal-footer" *ngIf="!loading">
+                    <button type="submit" class="btn btn-primary">Save</button>&nbsp;
+                    <button (click)="modal.close('Save click')" class="btn btn-danger">Cancel</button>      </div>
+                </form>
+
+
+              </ng-template>
+
+
+              <ng-template #myDialog let-modal>
+
+                <div class="modal-body">
+                    <div class="text-center" *ngIf="loading">
+                        <img src="assets/img/745.gif"/>
+                    </div>
+                    <div  *ngIf="!loading">
+                        Are you sure want to permanently delete this record ?
+                    </div>
+
+                </div>
+                <div class="modal-footer" *ngIf="!loading">
+                    <button (click)="modal.close('dodelete')" type="button" class="btn btn-danger btn-sm">Delete</button>&nbsp;
+                    <button (click)="modal.close('Save click')" class="btn btn-primary btn-sm">Cancel</button>
+                </div>
+
+
+
+              </ng-template>
+
+              <ngb-toast class="{{toast.className}}"
+              *ngFor="let toast of Toast.toasts"
+              [header]="toast.header" [autohide]="true" [delay]="toast.delay || 5000"
+              (hide)="Toast.remove(toast)"
+            >{{toast.body}}</ngb-toast>
+        </div>
+    </sb-card>
+</sb-layout-dashboard>

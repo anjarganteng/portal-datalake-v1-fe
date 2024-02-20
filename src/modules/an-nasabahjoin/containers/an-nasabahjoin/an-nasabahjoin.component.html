@@ -1,0 +1,382 @@
+<sb-layout-dashboard>
+  <sb-dashboard-head title="{{title}}" [hideBreadcrumbs]="false"></sb-dashboard-head>
+          <div class="alert alert-success alert-dismissible fade show" role="alert"  *ngIf="alertSuccess">
+              <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"  *ngIf="alertError">
+              <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+
+            <div class="alert alert-info alert-dismissible fade show" role="alert"  *ngIf="alertInfo">
+              <strong>{{alertTitle}}</strong> <br/>{{alertContent}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+
+      <sb-card>
+          <div class="card-header">
+              <div class="row">
+                  <div class="col-md-8">
+                      <fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon>{{title}} List
+                  </div>
+                  <div class="col-md-4 float-right">
+                    <button class="btn btn-primary"
+                    (click)="showAdd()"><i class="fa fa-plus" aria-hidden="true"></i> Add Data</button>
+                    &nbsp;
+                  
+                    <button class="btn btn-primary"
+                    (click)="getExcelData()"><i class="fa fa-download" aria-hidden="true"></i> Download</button>
+                    </div>
+                </div>
+
+          </div>
+      <div class="card-body">
+          <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"  class="table table-observer table-striped thead-dark">
+              <thead>
+                  <tr>
+                      <th scope="col">CIF</th>
+                      <th scope="col">CIF JOIN</th>
+                      <th scope="col">NAMA LENGKAP</th>
+                      <th scope="col">NPWP</th>
+                      <th scope="col">JENIS IDENTITAS</th>
+                      <th scope="col">NO IDENTITAS</th>
+                      <th scope="col">NAMA IBU</th>
+                      <th scope="col">TEMPAT LAHIR</th>
+                      <th scope="col">TANGGAL LAHIR</th>
+                      <th scope="col">NO SIUP</th>
+                      <th scope="col">NAMA PEMEGANG KUASA</th>
+                      <th scope="col">J.I KUASA</th>
+                      <th scope="col">NO.I KUASA</th>
+                      <th scope="col">ALAMAT</th>
+                      <th scope="col">KAB/KOTA</th>
+                      <th scope="col">KEWARNEGARAAN</th>
+                      <th scope="col">NO TELP</th>
+                      <th scope="col">HUB DGN BANK</th>
+                      <th scope="col">GOL NASABAH</th>
+                      <th scope="col">KATEGORI USAHA</th>
+                      <th>Action</th>
+                  </tr>
+                  <tr  *ngFor="let data of dataTableTemp">
+                    <td>{{data.cif}}</td>
+                    <td>{{data.cifJoin}}</td>
+                    <td>{{data.nmLnkpNsb}}</td>
+                    <td>{{data.noNpwp}}</td>
+                    <td>{{data.jnsIdentitas}}</td>
+                    <td>{{data.noIdentitas}}</td>
+                    <td>{{data.nmIbuKdg}}</td>
+                    <td>{{data.tmpLahir}}</td>
+                    <td>{{data.tglLahir}}</td>
+                    <td>{{data.noSiup}}</td>
+                    <td>{{data.nmLnkpPemegangKuasa}}</td>
+                    <td>{{data.jnsIdentitasPemegangKuasa}}</td>
+                    <td>{{data.noIdentitasPemegangKuasa}}</td>
+                    <td>{{data.alamat}}</td>
+                    <td>{{data.kabKota}}</td>
+                    <td>{{data.kewarnegaraan}}</td>
+                    <td>{{data.noTelp}}</td>
+                    <td>{{data.hubDgnBank}}</td>
+                    <td>{{data.golNsb}}</td>
+                    <td>{{data.kategoriUsaha}}</td>
+                    <td>
+                      <div class='actions-buttons center' id=''>
+                        <i kind='edit' class='fa fa-edit pointer text-info' title='Edit' (click)="showEdit(data)"></i>&nbsp;&nbsp;
+                          <i kind='delete' class='fa fa-trash pointer text-danger' title='Delete' (click)="showDelete(data)" ></i>
+                      </div>
+                    </td>
+                </tr>
+              </thead>
+              <tbody >
+        
+              </tbody>
+          </table>
+
+          <ng-template #mymodal let-modal>
+              <form  [formGroup]="form" (ngSubmit)="submit()">
+              <div class="modal-header" *ngIf="!loading">
+                <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <div class="text-center" *ngIf="loading">
+                      <img src="assets/img/745.gif"/>
+                  </div>
+                  <div  *ngIf="!loading">
+                    <div class="row">
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">CIF</label>
+                          <input type="text" class="form-control" id="cif" formControlName="cif" aria-describedby="emailHelp" placeholder="CIF">
+                          <div *ngIf="form.controls.cif.errors?.required && form.controls.cif.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">CIF JOIN</label>
+                          <input type="text" class="form-control" id="cifJoin" formControlName="cifJoin" aria-describedby="emailHelp" placeholder="CIF JOIN">
+                          <div *ngIf="form.controls.cifJoin.errors?.required && form.controls.cifJoin.touched" class="error">
+                            *Required
+                          </div>
+                       </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">FLAG NASABAH</label>
+                          
+                          <select class="form-control"  formControlName="flagNasabah" (change)="selectInput($event)">
+                            <option value="0">0. New Cif</option>
+                            <option value="1">1. Existing Cif</option>
+                          </select>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">FLAG JOIN</label>
+                          <select class="form-control"  formControlName="flagJoin">
+                            <option value="AND">AND / Join Account AND</option>
+                            <option value="OR">OR / Join Account OR</option>
+                            <option value="QQ">Beneficiary</option>
+                          </select>
+                        </div>
+                    </div>
+
+                    
+                    <div class="row">
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">TIPE CIF</label>
+                        <select class="form-control"  formControlName="tipeCif" (change)="selectTipeCif($event)">
+                          <option value="I">I. Individual / Perorangan</option>
+                          <option value="C">C. Corporate / Badan Hukum</option>
+                        </select>
+                      </div>
+                    
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">NAMA LENGKAP</label>
+                        <input type="text" class="form-control" id="nmLnkpNsb" formControlName="nmLnkpNsb" aria-describedby="emailHelp" placeholder="NAMA LENGKAP">
+                        <div *ngIf="form.controls.nmLnkpNsb.errors?.required && form.controls.nmLnkpNsb.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+                    </div>
+
+                  
+                    <div class="row">
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">NPWP</label>
+                        <input type="text" class="form-control" id="noNpwp" formControlName="noNpwp" aria-describedby="emailHelp" placeholder="NPWP">
+                        <div *ngIf="form.controls.noNpwp.errors?.required && form.controls.noNpwp.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">JENIS IDENTITAS</label>
+                        <select class="form-control"  formControlName="jnsIdentitas">
+                          <option value="" disabled selected>JENIS IDENTITAS</option>
+                          <option value="KTP">Kartu Tanda Penduduk</option>
+                          <option value="PAS">Paspor</option>
+                          <option value="KTS">KITAS/KITAP</option>
+                          <option value="LN">Lainnya</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">NO IDENTITAS</label>
+                        <input type="text" class="form-control" id="noIdentitas" formControlName="noIdentitas" aria-describedby="emailHelp" placeholder="NO IDENTITAS">
+                        <div *ngIf="form.controls.noIdentitas.errors?.required && form.controls.noIdentitas.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">NAMA IBU</label>
+                        <input type="text" class="form-control" id="nmIbuKdg" formControlName="nmIbuKdg" aria-describedby="emailHelp" placeholder="NAMA IBU">
+                        <div *ngIf="form.controls.nmIbuKdg.errors?.required && form.controls.nmIbuKdg.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">TEMPAT LAHIR</label>
+                          <input type="text" class="form-control" id="tmpLahir" formControlName="tmpLahir" aria-describedby="emailHelp" placeholder="TEMPAT LAHIR">
+                          <div *ngIf="form.controls.tmpLahir.errors?.required && form.controls.tmpLahir.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">TANGGAL LAHIR</label>
+                          <input type="text" class="form-control" id="tglLahir" formControlName="tglLahir" aria-describedby="emailHelp" placeholder="TANGGAL LAHIR" onfocus="(this.type='date')">
+                          <div *ngIf="form.controls.tglLahir.errors?.required && form.controls.tglLahir.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+        
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">NO SIUP</label>
+                          <input type="text" class="form-control" id="noSiup" formControlName="noSiup" aria-describedby="emailHelp" placeholder="NO SIUP">
+                          <div *ngIf="form.controls.noSiup.errors?.required && form.controls.noSiup.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">NAMA PEMEGANG KUASA</label>
+                          <input type="text" class="form-control" id="nmLnkpPemegangKuasa" formControlName="nmLnkpPemegangKuasa" aria-describedby="emailHelp" placeholder="NAMA PEMEGANG KUASA">
+                          <div *ngIf="form.controls.nmLnkpPemegangKuasa.errors?.required && form.controls.nmLnkpPemegangKuasa.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+                      </div>
+
+
+                    <div class="row">
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">JENIS PEMEGANG KUASA</label>
+                          <select class="form-control"  formControlName="jnsIdentitasPemegangKuasa">
+                            <option value="" disabled selected>JENIS IDENTITAS KUASA</option>
+                            <option value="KTP">Kartu Tanda Penduduk</option>
+                            <option value="PAS">Paspor</option>
+                            <option value="KTS">KITAS/KITAP</option>
+                            <option value="LN">Lainnya</option>
+                          </select>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">NO IDENTITAS KUASA</label>
+                          <input type="text" class="form-control" id="noIdentitasPemegangKuasa" formControlName="noIdentitasPemegangKuasa" aria-describedby="emailHelp" placeholder="NO IDENTITAS KUASA">
+                          <div *ngIf="form.controls.noIdentitasPemegangKuasa.errors?.required && form.controls.noIdentitasPemegangKuasa.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">ALAMAT</label>
+                          <input type="text" class="form-control" id="alamat" formControlName="alamat" aria-describedby="emailHelp" placeholder="ALAMAT">
+                          <div *ngIf="form.controls.alamat.errors?.required && form.controls.alamat.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+
+                        <div class="form-group col">
+                          <label for="exampleInputEmail1">KAB/KOTA</label>
+                          <input type="text" class="form-control" id="kabKota" formControlName="kabKota" aria-describedby="emailHelp" placeholder="KAB/KOTA">
+                          <div *ngIf="form.controls.kabKota.errors?.required && form.controls.kabKota.touched" class="error">
+                            *Required
+                          </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">KEWARNEGARAAN</label>
+                        <select class="form-control"  formControlName="kewarnegaraan">
+                          <option value="" disabled selected>KEWARGANEGARAAN</option>
+                          <option value="WNI">1. WNI</option>
+                          <option value="WNA">2. WNA</option>
+                        </select>
+                      </div>
+                    
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">NO TELP</label>
+                        <input type="text" class="form-control" id="noTelp" formControlName="noTelp" aria-describedby="emailHelp" placeholder="NO TELP">
+                        <div *ngIf="form.controls.noTelp.errors?.required && form.controls.noTelp.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">FLAG FRAUD</label>
+                        <select class="form-control"  formControlName="flagFraud">
+                          <option value="" disabled selected>FLAG FRAUD</option>
+                          <option value="2.3">2.3</option>
+                          <option value="1">1</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">HUB DGN BANK</label>
+                        <select class="form-control"  formControlName="hubDgnBank">
+                          <option value="" disabled selected>HUB DGN BANK</option>
+                          <option value="T1">Terkait - Perusahaan Induk</option>
+                          <option value="T2">Terkait - Perusahaan Anak</option>
+                          <option value="T3">Terkait - Perusahaan Asosiasi</option>
+                          <option value="T4">Terkait - Sister Company</option>
+                          <option value="T5">Terkait - Pengurus</option>
+                          <option value="T6">Terkait - Pegawai</option>
+                          <option value="T9">Terkait - Lainnya</option>
+                          <option value="N">Tidak Terkait</option>
+                        </select>
+                      </div>
+                    
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">GOL NSB</label>
+                        <input type="text" class="form-control" id="golNsb" formControlName="golNsb" aria-describedby="emailHelp" placeholder="GOL NSB">
+                        <div *ngIf="form.controls.golNsb.errors?.required && form.controls.golNsb.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+
+                      <div class="form-group col">
+                        <label for="exampleInputEmail1">KATEGORI USAHA</label>
+                        <input type="text" class="form-control" id="kategoriUsaha" formControlName="kategoriUsaha" aria-describedby="emailHelp" placeholder="KATEGORI USAHA">
+                        <div *ngIf="form.controls.kategoriUsaha.errors?.required && form.controls.kategoriUsaha.touched" class="error">
+                          *Required
+                        </div>
+                      </div>
+                    </div>
+                    
+                    </div>
+              </div>
+              <div class="modal-footer" *ngIf="!loading">
+                  <button type="submit" class="btn btn-primary">Save</button>&nbsp;
+                  <button (click)="modal.close('Save click')" class="btn btn-danger">Cancel</button>      </div>
+              </form>
+
+
+            </ng-template>
+
+
+            <ng-template #myDialog let-modal>
+
+              <div class="modal-body">
+                  <div class="text-center" *ngIf="loading">
+                      <img src="assets/img/745.gif"/>
+                  </div>
+                  <div  *ngIf="!loading">
+                      Are you sure want to permanently delete this record ?
+                  </div>
+
+              </div>
+              <div class="modal-footer" *ngIf="!loading">
+                  <button (click)="modal.close('dodelete')" type="button" class="btn btn-danger btn-sm">Delete</button>&nbsp;
+                  <button (click)="modal.close('Save click')" class="btn btn-primary btn-sm">Cancel</button>
+              </div>
+
+
+
+            </ng-template>
+
+            <ngb-toast class="{{toast.className}}"
+            *ngFor="let toast of Toast.toasts"
+            [header]="toast.header" [autohide]="true" [delay]="toast.delay || 5000"
+            (hide)="Toast.remove(toast)"
+          >{{toast.body}}</ngb-toast>
+      </div>
+  </sb-card>
+</sb-layout-dashboard>
+
